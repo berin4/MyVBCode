@@ -1,0 +1,65 @@
+Option Explicit
+
+Public Sub GenerateXLSM()
+Dim ws As Worksheet, wSheet As Worksheets
+Dim rngLast As Range, copyRng As Range, StrItem As Variant, strFilename As String, Icol As Integer
+Dim strOutputFolder As String, rngUnique As Range, sheetNames() As String, strName As String
+Dim Look_Value As Variant, Tble_Array As Range, Col_num As Integer, Range_look As Boolean
+Dim I As Integer, WS_Count As Integer
+Dim vFound
+
+
+Application.ScreenUpdating = False
+Application.DisplayAlerts = False
+
+Icol = 8                                '### Define your criteria column
+strOutputFolder = "Test XLSM OUTPUT" '### Define your path of output folder
+
+Set ws = ActiveSheet       '### Don't edit below this line
+'Set wSheet = ThisWorkbook.Worksheets
+'Set rngLast = Columns(Icol).Find("*", Cells(1, Icol), , , xlByColumns, xlPrevious)
+'ws.Columns(Icol).AdvancedFilter Action:=xlFilterInPlace, Unique:=True
+'Set rngUnique = Range(Cells(2, Icol), rngLast).SpecialCells(xlCellTypeVisible)
+WS_Count = ActiveWorkbook.Worksheets.Count
+ '("BMS", "CMS", "GIA", "IIA", "PIMS", "PVR", "URS", "RBE").Range(1)
+ReDim sheetNames(WS_Count)
+For I = 1 To WS_Count
+sheetNames(I - 1) = ActiveWorkbook.Worksheets(I).Name
+
+For I = 0 To WS_Count - 1
+'Set rngLast = Range(strName)
+'For Each ws In rngLast
+Set copyRng = Columns(Icol).Find("*", Cells(1, Icol), , , xlByColumns, xlPrevious)
+ws.Columns(Icol).AdvancedFilter Action:=xlFilterInPlace, Unique:=True
+Set rngUnique = Range(Cells(2, Icol), copyRng).SpecialCells(xlCellTypeVisible)
+        If ws.Name <> "Name_MGR" Then
+            With ws
+                Set Tble_Array = .Range(Tble_Array.Address)
+                vFound = WorksheetFunction.VLookup _
+                (Look_Value, Tble_Array, _
+                Icol, copyRng)
+            End With
+            If Not IsEmpty(vFound) Then Exit For
+       End If
+       Set Tble_Array = Nothing
+     Next
+     strName = strName & sheetNames(I) & vbCrLf
+    Next
+    strName = "Here are the worksheet names:" & vbCrLf
+
+If Dir(strOutputFolder, vbDirectory) = vbNullString Then MkDir strOutputFolder
+For Each StrItem In rngUnique
+  If StrItem <> "" Then
+    ws.UsedRange.AutoFilter Field:=Icol, Criteria1:=StrItem.Value
+    Workbooks.Add
+    ws.UsedRange.SpecialCells(xlCellTypeVisible).Copy Destination:=[A1]
+    strFilename = strOutputFolder & "\" & StrItem
+    ActiveWorkbook.SaveAs Filename:=strFilename, FileFormat:=xlCSV
+    ActiveWorkbook.Close savechanges:=False
+  End If
+Next
+ws.ShowAllData
+
+Application.ScreenUpdating = True
+Application.DisplayAlerts = True
+End Sub

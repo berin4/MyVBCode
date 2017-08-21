@@ -1,0 +1,3 @@
+SELECT BMS_Q_Query.APPLICATION AS Application, BMS_Q_Query.NAME AS Name, BMS_Q_Query.APP_ID AS App_Id, BMS_Q_Query.APP_ACCESS AS App_Access, BMS_Q_Query.ADDITIONAL_ACCESS AS Addtl_Access, BMS_Q_Query.ENTITLEMENT_DESCRIPTION AS Ent_Description, BMS_Q_Query.DECISON AS Decision, BMS_Q_Query.Managers AS Mgr_Name, ALL_MGRS_Q.MGR_NAME AS Mgr
+FROM BMS_Q_Query INNER JOIN ALL_MGRS_Q ON BMS_Q_Query.Managers = ALL_MGRS_Q.MGR_NAME
+WHERE BMS_Q_Query.Managers = 'Joann White';

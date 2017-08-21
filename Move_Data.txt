@@ -1,0 +1,46 @@
+data from the closed workbook, I need to label the sheet names as dynamic. However, when using my string variable for the name, the code will not run.
+Public Sub MoveData()
+
+    Dim fileName As String
+        fileName = Worksheets("Cover").range("B5").Value
+
+    Dim path As String
+        path = "C:\Users\(user)\Documents\(folder)\" & fileName & ".csv"
+
+    Dim currentWB As Workbook
+    Set currentWB = ThisWorkbook
+
+    Dim openWB As Workbook
+    Set openWB = Workbooks.Open(path)
+
+    Dim openWs As Worksheet
+    Set openWs = openWB.Sheets(fileName)
+
+    Dim cn As ADODB.Connection
+    Set cn = New ADODB.Connection
+    With cn
+        .Provider = "Microsoft.ACE.OLEDB.12.0"
+        .ConnectionString = "Data Source=" & path & ";" & _
+                    "Extended Properties=Excel 12.0 Xml;"
+        .Open
+    End With
+
+    strQuery = "SELECT * FROM [filename$C2:C100]"
+
+    Set cmd = New ADODB.Command
+    With cmd
+        .ActiveConnection = cn
+        .CommandText = strQuery
+    End With
+
+    Dim rst As New ADODB.Recordset
+    With rst
+        .ActiveConnection = cn
+        .Open cmd
+    End With
+
+    currentWB.Worksheets("Bms").range("C7").CopyFromRecordset rst
+
+    openWB.Close
+
+End Sub

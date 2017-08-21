@@ -1,0 +1,26 @@
+SELECT Admin.Application AS APPLICATION,Admin.Name AS NAME,Admin.Title AS TITLE,Admin.Location AS LOCATION,Admin.Department AS DEPT,Admin.Manager,Left([Manager],InStr([Manager],",")-1) AS LastName, Mid([Manager],InStr([Manager],",")+1) AS FirstName,[FirstName]& " "&[LastName] AS Expr1,Admin.Application_ID AS APP_ID,Admin.Application_Access AS APP_ACCESS,Admin.Additional_Access AS ADDITIONAL_ACCESS,Admin.Entitlement_Description AS ENTITLEMENT_DESCRIPTION,Admin.Decision AS DECISON
+FROM Admin 
+UNION SELECT 
+AffiliatedFM.Application AS APPLICATION,AffiliatedFM.Name AS NAME,AffiliatedFM.Title AS TITLE,AffiliatedFM.Location AS LOCATION,AffiliatedFM.Department AS DEPT,AffiliatedFM.Manager AS MGR_NAME,Left([Manager],InStr([Manager],",")-1) AS LastName, Mid([Manager],InStr([Manager],",")+1) AS FirstName,[FirstName]& " "&[LastName] AS Expr1,AffiliatedFM.Application_ID AS APP_ID,AffiliatedFM.Application_Access AS APP_ACCESS,AffiliatedFM.Additional_Access AS ADDITIONAL_ACCESS,AffiliatedFM.Entitlement_Description AS ENTITLEMENT_DESCRIPTION,AffiliatedFM.Decision as DECISION
+FROM AffiliatedFM
+UNION SELECT 
+Auth_Underwriter.Application AS APPLICATION,Auth_Underwriter.Name AS NAME,Auth_Underwriter.Title AS TITLE,Auth_Underwriter.Location AS LOCATION,Auth_Underwriter.Department AS DEPT,Auth_Underwriter.Manager AS MGR_NAME, Left([Manager],InStr([Manager],",")-1) AS LastName, Mid([Manager],InStr([Manager],",")+1) AS FirstName,[FirstName]& " "&[LastName] AS Expr1,Auth_Underwriter.Application_ID AS APP_ID,Auth_Underwriter.Application_Access AS APP_ACCESS,Auth_Underwriter.Additional_Access AS ADDITIONAL_ACCESS,Auth_Underwriter.Entitlement_Description AS ENTITLEMENT_DESCRIPTION,Auth_Underwriter.Decision as DECISION
+FROM Auth_Underwriter
+UNION SELECT
+Claims.Application AS APPLICATION,Claims.Name AS NAME,Claims.Title AS TITLE,Claims.Location AS LOCATION,Claims.Department AS DEPT,Claims.Manager AS MGR_NAME,Left([Manager],InStr([Manager],",")-1) AS LastName, Mid([Manager],InStr([Manager],",")+1) AS FirstName,[FirstName]& " "&[LastName] AS Expr1,Claims.Application_ID AS APP_ID,Claims.Application_Access AS APP_ACCESS,Claims.Additional_Access AS ADDITIONAL_ACCESS,Claims.Entitlement_Description AS ENTITLEMENT_DESCRIPTION,Claims.Decision AS DECISION
+FROM Claims 
+UNION SELECT 
+Corporate.Application AS APPLICATION,Corporate.Name AS NAME,Corporate.Title AS TITLE,Corporate.Location AS LOCATION,Corporate.Department AS DEPT,Corporate.Manager AS MGR_NAME,Left([Manager],InStr([Manager],",")-1) AS LastName, Mid([Manager],InStr([Manager],",")+1) AS FirstName,[FirstName]& " "&[LastName] AS Expr1,Corporate.Application_ID AS APP_ID,Corporate.Application_Access AS APP_ACCESS,Corporate.Additional_Access AS ADDITIONAL_ACCESS,Corporate.Entitlement_Description AS ENTITLEMENT_DESCRIPTION,Corporate.Decision AS DECISION
+FROM Corporate
+UNION SELECT 
+Engineering.Application AS APPLICATION,Engineering.Name AS NAME,Engineering.Title AS TITLE,Engineering.Location AS LOCATION,Engineering.Department AS DEPT,Engineering.Manager AS MGR_NAME,Left([Manager],InStr([Manager],",")-1) AS LastName, Mid([Manager],InStr([Manager],",")+1) AS FirstName,[FirstName]& " "&[LastName] AS Expr1,Engineering.Application_ID AS APP_ID,Engineering.Application_Access AS APP_ACCESS,Engineering.Additional_Access AS ADDITIONAL_ACCESS,Engineering.Entitlement_Description AS ENTITLEMENT_DESCRIPTION,Engineering.Decision AS DECISION
+FROM Engineering
+UNION SELECT
+Infoport.Application AS APPLICATION,Infoport.Name AS NAME,Infoport.Title AS TITLE,Infoport.Location AS LOCATION,Infoport.Department AS DEPT,Infoport.Manager AS MGR_NAME,Left([Manager],InStr([Manager],",")-1) AS LastName, Mid([Manager],InStr([Manager],",")+1) AS FirstName,[FirstName]& " "&[LastName] AS Expr1,Infoport.Application_ID AS APP_ID,Infoport.Application_Access AS APP_ACCESS,Infoport.Additional_Access AS ADDITIONAL_ACCESS,Infoport.Entitlement_Description AS ENTITLEMENT_DESCRIPTION,Infoport.Decision AS DECISION
+FROM Infoport 
+UNION SELECT 
+NPC.Application AS APPLICATION,NPC.Name AS NAME,NPC.Title AS TITLE,NPC.Location AS LOCATION,NPC.Department AS DEPT,NPC.Manager AS MGR_NAME,Left([Manager],InStr([Manager],",")-1) AS LastName, Mid([Manager],InStr([Manager],",")+1) AS FirstName,[FirstName]& " "&[LastName] AS Expr1,NPC.Application_ID AS APP_ID,NPC.Application_Access AS APP_ACCESS,NPC.Additional_Access AS ADDITIONAL_ACCESS,NPC.Entitlement_Description AS ENTITLEMENT_DESCRIPTION,NPC.Decision AS DECISION
+FROM NPC 
+UNION SELECT 
+Operations.Application AS APPLICATION,Operations.Name AS NAME,Operations.Title AS TITLE,Operations.Location AS LOCATION,Operations.Department AS DEPT,Operations.Manager AS MGR_NAME,Left([Manager],InStr([Manager],",")-1) AS LastName,[FirstName]& " "&[LastName] AS Expr1, Mid([Manager],InStr([Manager],",")+1) AS FirstName,Operations.Application_ID AS APP_ID,Operations.Application_Access AS APP_ACCESS,Operations.Additional_Access AS ADDITIONAL_ACCESS,Operations.Entitlement_Description AS ENTITLEMENT_DESCRIPTION,Operations.Decision AS DECISION
+FROM Operations;

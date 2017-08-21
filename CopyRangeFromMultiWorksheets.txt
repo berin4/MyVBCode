@@ -1,0 +1,69 @@
+Sub CopyRangeFromMultiWorksheets()
+    Dim sh As Worksheet
+    Dim DestSh As Worksheet
+    Dim Last As Long
+    Dim CopyRng As Range
+
+    With Application
+        .ScreenUpdating = False
+        .EnableEvents = False
+    End With
+
+    ' Delete the summary sheet if it exists.
+    Application.DisplayAlerts = False
+    On Error Resume Next
+    ActiveWorkbook.Worksheets("RDBMergeSheet").Delete
+    On Error GoTo 0
+    Application.DisplayAlerts = True
+
+    ' Add a new summary worksheet.
+    Set DestSh = ActiveWorkbook.Worksheets.Add
+    DestSh.Name = "RDBMergeSheet"
+
+    ' Loop through all worksheets and copy the data to the 
+    ' summary worksheet.
+    For Each sh In ActiveWorkbook.Worksheets
+        If sh.Name <> DestSh.Name Then
+
+            ' Find the last row with data on the summary worksheet.
+            Last = LastRow(DestSh)
+
+            ' Specify the range to place the data.
+            Set CopyRng = sh.Range("A1:G1")
+
+            ' Test to see whether there are enough rows in the summary
+            ' worksheet to copy all the data.
+            If Last + CopyRng.Rows.Count > DestSh.Rows.Count Then
+                MsgBox "There are not enough rows in the " & _
+                   "summary worksheet to place the data."
+                GoTo ExitTheSub
+            End If
+
+            ' This statement copies values and formats from each 
+            ' worksheet.
+            CopyRng.Copy
+            With DestSh.Cells(Last + 1, "A")
+                .PasteSpecial xlPasteValues
+                .PasteSpecial xlPasteFormats
+                Application.CutCopyMode = False
+            End With
+
+            ' Optional: This statement will copy the sheet 
+            ' name in the H column.
+            DestSh.Cells(Last + 1, "H").Resize(CopyRng.Rows.Count).Value = sh.Name
+
+        End If
+    Next
+
+ExitTheSub:
+
+    Application.Goto DestSh.Cells(1)
+
+    ' AutoFit the column width in the summary sheet.
+    DestSh.Columns.AutoFit
+
+    With Application
+        .ScreenUpdating = True
+        .EnableEvents = True
+    End With
+End Sub

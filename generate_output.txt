@@ -1,0 +1,70 @@
+
+Option Explicit 
+ 
+ 
+Public Sub Generate_Output() 
+    Dim vList As Variant 
+    Dim rData As Range 
+    Dim ws As Worksheet 
+    Dim iloop As Integer 
+    Dim wbNew As Workbook 
+    Dim r2 As Range 
+     
+    Application.ScreenUpdating = False 
+    Application.DisplayAlerts = False 
+     
+    On Error Goto My_Exit 
+     
+    Set rData = Worksheets(1).UsedRange.Columns(1) 
+    vList = Application.Transpose(rData.Offset(1, 0).Resize(rData.Rows.Count - 1)) 
+     vList = RemoveDupes(vList)
+     
+    For Each ws In ThisWorkbook.Worksheets 
+        Set r2 = ws.UsedRange 
+        For iloop = LBound(vList) To UBound(vList) 
+            Set wbNew = Nothing 
+            On Error Resume Next:    Set wbNew = Workbooks(vList(iloop) & ".xlsx"): On Error Goto My_Exit 
+            If wbNew Is Nothing Then 
+                Set wbNew = Workbooks.Add 
+                ws.UsedRange.Rows(1).Copy Destination:=wbNew.Worksheets(1).Range("A1") 
+                wbNew.SaveAs ThisWorkbook.Path & "\" & vList(iloop), 51 
+            End If 
+            r2.Rows(1).AutoFilter field:=1, Criteria1:=vList(iloop) 
+            r2.Offset(1, 0).SpecialCells(xlCellTypeVisible).Copy Destination:=wbNew.Worksheets(1).Range("A" & Rows.Count).End(xlUp).Offset(1, 0) 
+        Next 
+        ws.AutoFilterMode = False 
+    Next 
+     
+    For iloop = LBound(vList) To UBound(vList) 
+        Workbooks(vList(iloop) & ".xlsx").Close True 
+    Next 
+     
+    MsgBox "All Done!", vbOKOnly 
+     
+My_Exit: 
+    Application.ScreenUpdating = True 
+    Application.DisplayAlerts = True 
+     
+    If Err.Number <> 0 Then MsgBox "OH NO!!! Something bad happened" & vbCrLf & vbCrLf & Err.Number & vbCrLf & vbCrLf & Err.Description & vbCrLf & vbCrLf & "....And make sure all the excel files are closed", vbOKOnly 
+     
+End Sub 
+ 
+ Public Function RemoveDupes(InputArray As Variant) As Variant
+     
+     'remove duplicates from array
+     
+    Dim x As Long 
+    If IsArray(InputArray) Then 
+        With CreateObject("Scripting.Dictionary") 
+            For x = LBound(InputArray) To UBound(InputArray) 
+                If Not IsMissing(InputArray(x)) Then .Item(InputArray(x)) = 1 
+            Next 
+             RemoveDupes = .Keys
+        End With 
+    Else 
+         RemoveDupes = InputArray
+    End If 
+End Function 
+
+
+ 

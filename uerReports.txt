@@ -1,0 +1,207 @@
+'Force the explicit declaration of variables
+Option Explicit
+
+Sub CreateWorkbooks()
+
+    'Declare the variables
+    Dim strDestPath As String
+    Dim strSaveAsFilename As String
+    Dim strFileExt As String
+    Dim strBadChars As String
+    Dim Msg As String
+    Dim wkbSource As Workbook
+    Dim wksSource As Worksheet
+    Dim wkbDest As Workbook
+    Dim wksDest As Worksheet
+    Dim wksTemp As Worksheet
+    Dim rngData As Range
+    Dim rngUniqueVals As Range
+    Dim rngCell As Range
+    Dim FileFormatNum As Long
+    Dim CalcMode As Long
+    Dim LastRow As Long
+    Dim CellCount As Long
+    Dim i As Long, n As Long
+    Dim bAborted As Boolean
+    
+    'Check if the active sheet is a worksheet
+    If TypeName(ActiveSheet) <> "Worksheet" Then
+        MsgBox "Please make sure that the worksheet containing" & vbCrLf & _
+            "the data is the active sheet, and try again!", vbExclamation
+        Exit Sub
+    End If
+    
+    'Check if the worksheet contains data
+    If ActiveSheet.UsedRange.Rows.Count = 1 Then
+        MsgBox "No data is available.  Please try again!", vbExclamation
+        Exit Sub
+    End If
+    
+    'Specify the path to the folder in which to save the newly created files
+    strDestPath = "C:\Users\ezumangwub\Documents\Data\ManagerReports"
+    
+    'Make sure that the path ends in a backslash
+    If Right(strDestPath, 1) <> "\" Then strDestPath = strDestPath & "\"
+    
+    'Check if the path exists
+    If Len(Dir(strDestPath, vbDirectory)) = 0 Then
+        MsgBox "The path to your folder does not exist.  Please check" & vbCrLf & _
+            "the path, and try again!", vbExclamation
+        Exit Sub
+    End If
+    
+    'Define the illegal characters for a filename
+    strBadChars = "\/<>?[]:|*"""
+    
+    'Set the active workbook
+    Set wkbSource = ActiveWorkbook
+    
+    'Set the active worksheet
+    Set wksSource = ActiveSheet
+    
+    'Set the file extension and format
+    If Val(Application.Version) < 12 Then
+        strFileExt = ".xls"
+        FileFormatNum = -4143
+    Else
+        If wkbSource.FileFormat = 56 Then
+            strFileExt = ".xls"
+            FileFormatNum = 56
+        Else
+            strFileExt = ".xlsx"
+            FileFormatNum = 51
+        End If
+    End If
+    
+    'Change the settings for Calculation, EnableEvents, and ScreenUpdating
+    With Application
+       CalcMode = .Calculation
+       .Calculation = xlCalculationManual
+       .EnableEvents = False
+       .ScreenUpdating = False
+    End With
+    
+    'Turn off the AutoFilter, if it's on
+    wksSource.AutoFilterMode = False
+    
+    'Set the range for the source data
+    Set rngData = wksSource.UsedRange
+        
+    'Create a temporary worksheet to store the unique values from Column B
+    Set wksTemp = wkbSource.Worksheets.Add
+    
+    'Filter Column B for unique values and copy them to the temporary worksheet
+    rngData.Columns(8).AdvancedFilter _
+        Action:=xlFilterCopy, _
+        CriteriaRange:="<>", _
+        CopyToRange:=wksTemp.Range("A1"), _
+        Unique:=True
+        
+    'Set the range for the unique values from the temporary worksheet
+    With wksTemp
+        Set rngUniqueVals = .Range("A2", .Cells(.Rows.Count, "A").End(xlUp))
+    End With
+        
+    'Loop through each unique value
+    For Each rngCell In rngUniqueVals
+    
+        'Filter for the current unique value
+        rngData.AutoFilter Field:=8, Criteria1:="=" & _
+            Replace(Replace(Replace(rngCell.Value, "~", "~~"), "*", "~*"), _
+                "?", "~?")
+                
+        'For versions of Excel prior to 2010, check for the SpecialCells limit
+        If Val(Application.Version) < 14 Then
+            CellCount = 0
+            On Error Resume Next
+            CellCount = rngData.Columns(1) _
+                .SpecialCells(xlCellTypeVisible).Areas(1).Cells.Count
+            On Error GoTo 0
+            If CellCount = 0 Then
+                Msg = "The SpecialCells limit of 8,192 areas has been "
+                Msg = Msg & vbNewLine
+                Msg = Msg & "exceeded for the value """ & rngCell & """."
+                Msg = Msg & vbNewLine & vbNewLine
+                Msg = Msg & "Sort the data, and try again!"
+                MsgBox Msg, vbExclamation, "SpecialCells Limitation"
+                bAborted = True
+                Exit For
+            End If
+        End If
+            
+        'Create a new workbook with one worksheet in which to copy the data
+        Set wkbDest = Workbooks.Add(UER_Report_Template1)
+       For n = 1 To myshtArray(8)
+        'Set the destination worksheet
+        Set wksDest = wkbDest.myshtArray(n + 1)
+        wksDest.Name = myshtArray(n).Name
+        Next n
+        
+        'Copy the filtered data to the destination worksheet
+        rngData.SpecialCells(xlCellTypeVisible).Copy
+        With wksDest.Range("A1")
+            .PasteSpecial Paste:=8  'column width for Excel 2000 and later
+            .PasteSpecial Paste:=xlPasteValues
+            .PasteSpecial Paste:=xlPasteFormats
+            .Select
+        End With
+        
+        'Define the SaveAs filename for the new workbook using the current unique value
+        strSaveAsFilename = rngCell.Value & strFileExt
+        
+        'Replace any illegal characters in the SaveAs filename with an underscore
+        For i = 1 To Len(strBadChars)
+            strSaveAsFilename = _
+                Replace(strSaveAsFilename, Mid(strBadChars, i, 1), "_")
+        Next i
+        
+        'If the SaveAs filename already exists, add a date stamp to the filename
+        If Len(Dir(strDestPath & strSaveAsFilename)) > 0 Then
+            strSaveAsFilename = Replace(strSaveAsFilename, strFileExt, _
+                " " & Format(Now, "yyyy-mm-dd hh-mm-ss") & strFileExt)
+        End If
+        
+        'Save the workbook
+        wkbDest.SaveAs _
+            Filename:=strDestPath & strSaveAsFilename, _
+            FileFormat:=FileFormatNum
+        
+        'Close the workbook
+        wkbDest.Close
+        
+    Next rngCell
+    
+    'Turn off the AutoFilter
+    wksSource.AutoFilterMode = False
+    
+    'Delete the temporary worksheet
+    Application.DisplayAlerts = False
+    wksTemp.Delete
+    Application.DisplayAlerts = True
+    
+    'Restore the settings for Calculation, EnableEvents, and ScreenUpdating
+    With Application
+        .Calculation = CalcMode
+        .EnableEvents = True
+        .ScreenUpdating = True
+    End With
+    
+    'Display a message box to alert the user of completion
+    If bAborted = False Then
+        MsgBox "Completed...", vbInformation
+    End If
+        
+End Sub
+
+
+'If ws2 = "BMS" Or "CMS" Or "IIA" Or "GIA" Or "PIMS" Or "PVR" Or "URS" Or "RBE" Then
+                   
+            My_Range.Columns(FieldNum).AdvancedFilter _
+                Action:=xlFilterCopy, _
+                CopyToRange:=.Range("H2"), Unique:=True
+                WB.Sheets.Name = iSheet.Name
+                   Exit For
+                End If
+             Next iSheet
+          End If
+          If bln = False Then

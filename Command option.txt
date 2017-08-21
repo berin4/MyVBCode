@@ -1,0 +1,187 @@
+
+Dim ws  As Worksheet, _
+    LR1 As Long, _
+    LR2 As Long
+Application.ScreenUpdating = False
+For Each ws In ActiveWorkbook.Worksheets
+    If ws.Name <> "Master" Then
+        LR1 = Sheets("Master").Range("A" & Rows.Count).End(xlUp).row + 1
+        LR2 = ws.Range("D" & Rows.Count).End(xlUp).row
+        ws.Range("A1:J" & LR2).Copy Destination:=Sheets("Master").Range("A" & LR1)
+    End If
+Next ws
+Application.ScreenUpdating = True
+End Sub
+
+
+Sample Visual Basic Procedures
+To create six Sub procedures that illustrate the most common methods you can use to run a Visual Basic Sub procedure or Microsoft Excel version 4.0 macro from another Visual Basic procedure, follow these steps: 
+
+1.In a new workbook, insert a Microsoft Excel 4.0 macro sheet called Macro1 and a Visual Basic module called Module1. 
+
+ To insert a Visual Basic module in Microsoft Excel 97 or Microsoft Excel 98, press ALT+F11 to activate the Visual Basic Editor. Then, click Module on the Insert menu. 
+2.On the macro sheet, enter the following macro: 
+A1: TestXLM
+ A2: =ALERT("TestXLM works!")
+ A3: =RETURN()
+This macro displays an alert box. 
+3.On the macro sheet, select cell A1. 
+4.On the Insert menu, point to Name, and then click Define. 
+5.Verify that the following information appears in the Define Name dialog box:
+
+•The Names In Workbook box contains the name TestXLM.
+•The Refers To box contains the reference =Macro1!$A$1.
+•The Command option is selected under Macro.
+When the settings are as specified above, click OK to define the name of the macro. 
+6.In Module1, enter the following Sub procedures: 
+
+      Option Explicit
+
+      'The TestVBSub subroutine displays a message box: it is the Visual
+      'Basic equivalent of the TestXLM macro shown above.
+
+      Sub TestVBSub()
+          MsgBox "TestVBSub works!"             'Displays a message box.
+      End Sub
+
+      'The Test1 Sub procedure makes use of the Application.Run method with
+      'hard-coded macro/subroutine names.
+
+      Sub Test1()
+          Application.Run ("TestVBSub")
+          Application.Run ("TestXLM")
+      End Sub
+
+      'The Test2 Sub procedure makes use of the Application.Run method with
+      'variable macro/Sub procedure names.
+
+      Sub Test2()
+          Dim SubToRun As String, MacroToRun As String
+          SubToRun = "TestVBSub"
+          MacroToRun = "TestXLM"
+          Application.Run (SubToRun)
+          Application.Run (MacroToRun)
+      End Sub
+
+Set wkbSource = ActiveWorkbook
+Set TwkbSource = wkbSource.Sheets(Array("BMS", "CMS", "GIA", "IIA", "PIMS", "PVR", "URS", "ROLE_BASED EXCEPTION ACCESS"))
+Set managerSheet = Sheets("MANAGER SHEET")
+managerRange = "C2:" & managerSheet.Range("C2").End(xlDown).Address
+
+      'The Test3 Sub procedure makes use of the  
+      'Application.ExecuteExcel4Macro
+      'method with hard-coded macro/Sub procedure names.
+
+      Sub Test3()
+          'Note the extra quotation marks which are contained within the
+          'RUN statements. These are required in order for the command to
+          'evaluate properly.
+          Application.ExecuteExcel4Macro "RUN(""TestVBSub"")"
+          Application.ExecuteExcel4Macro "RUN(""TestXLM"")"
+      End Sub
+
+      'The Test4 Sub procedure makes use of the 
+      'Application.ExecuteExcel4Macro
+      'method with variable macro/Sub procedure names.
+
+      Sub Test4()
+          Dim SubToRun As String, MacroToRun As String
+          SubToRun = "TestVBSub"
+          MacroToRun = "TestXLM"
+          'Note the extra quotation marks which are contained within the
+          'RUN statements. These are required in order for the command to
+          'evaluate properly.
+          Application.ExecuteExcel4Macro "RUN(""" & SubToRun & """)"
+          Application.ExecuteExcel4Macro "RUN(""" & MacroToRun & """)"
+      End Sub
+
+      'The Test5 Sub procedure uses the Call method with hard-coded
+      'Sub procedure names.
+
+      Sub Test5()
+          Call TestVBSub
+      End Sub
+
+      'The Test6 Sub procedure runs the TestVBSub subroutine because its 
+      'name is entered on a line by itself.
+
+      Sub Test6()
+          TestVBSub
+      End Sub
+
+Workbooks.Open Filename:="C:\Users\ezumangwub\Documents\PAR_UER\2016 UER\UER_2016_example.xlsm"
+
+erow = ActiveSheet.Cells(Rows.Count, 1).End(xlUp).Offset(1, 0).Row
+  erow = wksSource.Cells(Rows.Count, 1).End(xlUp).Offset(1, 0).Row
+wksSource.Cells(erow, 1).Select
+  Set CopyRng = DestSh.Range("A2:H2")
+ iStart = 2
+    For i = 2 To LastRow
+        If .rngCells(i, iCol).Value <> .rngCells(i + 1, iCol).Value Then
+            iEnd = i
+Set DestSh = wkbSource.Worksheets.Add
+Set CopyRng = DestSh.Cells(erow, 1).Select
+ CopyRng.Copy
+                With DestSh.Cells(Last + 1, "A")
+        DestSh.Range("A2").PasteSpecial xlPasteAllMergingConditionalFormats
+Set DestSh = wkbSource.Worksheets.Add
+  With DestSh
+  Set wksDest = wksSource.Range("A2", .Cells(.Rows.Count, "A").End(xlUp))
+     End With
+
+
+ .Range("G" & iStart).Value
+
+thisWB = ActiveWorkbook.Name
+On Error Resume Next
+Sheets("tempsheet").Delete
+On Error GoTo 0
+Sheets.Add
+ActiveSheet.Name = tempsheet
+If ActiveSheet.AutoFilterMode Then
+        Cells.Select
+        On Error Resume Next
+        ActiveSheet.ShowAllData
+        On Error GoTo 0
+    End If
+
+
+LastSheet = loopSheets(1, 8)
+j = 8
+For j = 2 To LastSheet
+    AppSheet = ActiveSheet.Name
+    On Error Resume Next
+j = j + 1
+Next j
+
+
+
+
+LastSheet = loopSheets(1, 8)
+j = 8
+For j = 2 To LastSheet
+If .Cells(j, iCol).Value <> .Cells(j + 1, iCol).Value Then
+            iEnd = i
+Sheets.Add after:=Sheets(Sheets.Count)
+    AppSheet = ActiveSheet.Name
+    On Error Resume Next
+j = j + 1
+Next j
+
+
+   On Error Resume Next
+            Set wbDest = ActiveWorkbook.Add
+            Set DestSh = wbDest.Worksheets.Add
+            wbDest.Sheets.Application.Cells(iStart, "A2").Value = DestSh.Name
+
+Set wbDest = ActiveWorkbook
+Dim loopSheets(8) As Variant
+loopSheets(0) = "MenuSheeet"
+loopSheets(1) = "BMS"
+loopSheets(2) = "CMS"
+loopSheets(3) = "GIA"
+loopSheets(4) = "IIA"
+loopSheets(5) = "PIMS"
+loopSheets(6) = "PVR"
+loopSheets(7) = "URS"
+loopSheets(8) = "ROLE_BASED EXCEPTION ACCESS}"

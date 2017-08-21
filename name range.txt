@@ -1,0 +1,28 @@
+Tim Scoot
+Annette
+
+
+
+Validate_App/Addtl_Access
+
+Decision_Choice_List_1
+
+Decision_Choice_List_2
+
+Validate_Additional_Access
+
+Please select a decision from choice list
+
+Validate_Application_Access
+
+Please select a decision from choice list
+
+
+ROLE_CORPORATESTAFFINFOSERVICESBUSSUPP_INCLUDE
+ROLE_CORPORATESTAFFINFOSERVICESMANAGEMENT_INCLUDE
+ROLE_CLIENTDOCUMENTMANAGEMENT_EXCLUDE
+ROLE_INFOPORT_VIEWING_INCLUDE
+ROLE_CORPORATESTAFFENGINEERINGMANAGEMENT_INCLUDE
+
+
+C:\Users\ezumangwub\Documents\PAR_UER\2016 UER\UERMgrReports\Example2

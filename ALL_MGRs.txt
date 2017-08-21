@@ -1,0 +1,43 @@
+SELECT DISTINCT Admin.[Manager]
+FROM Admin 
+UNION
+SELECT DISTINCT AffiliatedFM.[Manager]
+FROM AffiliatedFM
+UNION
+SELECT DISTINCT Auth_Underwriter.[Manager]
+FROM Auth_Underwriter
+UNION
+SELECT DISTINCT Claims.[Manager]
+FROM Claims
+UNION
+SELECT DISTINCT Corporate.[Manager]
+FROM Corporate
+UNION
+SELECT DISTINCT Engineering.[Manager]
+FROM Engineering
+UNION
+SELECT DISTINCT GIA.[Manager]
+FROM GIA
+UNION
+SELECT DISTINCT IIA.[Manager]
+FROM IIA
+UNION
+SELECT DISTINCT Infoport.[Manager]
+FROM Infoport
+UNION
+SELECT DISTINCT NPC.[Manager]
+FROM NPC
+UNION
+SELECT DISTINCT Operations.[Manager]
+FROM Operations
+UNION
+SELECT DISTINCT URS.[Manager]
+FROM URS
+UNION 
+SELECT DISTINCT BMS.[Manager]
+FROM BMS
+UNION
+SELECT DISTINCT R_PIMS.[Manager]
+FROM
+R_PIMS
+ORDER BY Manager;

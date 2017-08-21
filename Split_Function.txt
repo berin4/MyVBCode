@@ -1,0 +1,25 @@
+SELECT Left([Manager],InStr([Manager],",")-1) AS LastName, Mid([Manager],InStr([Manager],",")+1) AS FirstName
+FROM Admin
+UNION
+SELECT Left([Manager],InStr([Manager],",")-1) AS LastName, Mid([Manager],InStr([Manager],",")+1) AS FirstName
+FROM AffiliatedFM
+UNION
+SELECT Left([Manager],InStr([Manager],",")-1) AS LastName, Mid([Manager],InStr([Manager],",")+1) AS FirstName
+FROM Authorized_Underwriter
+UNION
+SELECT Left([Manager],InStr([Manager],",")-1) AS LastName, Mid([Manager],InStr([Manager],",")+1) AS FirstName
+FROM Claims
+UNION
+SELECT Left([Manager],InStr([Manager],",")-1) AS LastName, Mid([Manager],InStr([Manager],",")+1) AS FirstName
+FROM Corporate
+UNION
+SELECT Left([Manager],InStr([Manager],",")-1) AS LastName, Mid([Manager],InStr([Manager],",")+1) AS FirstName
+FROM Engineering
+UNION
+SELECT Left([Manager],InStr([Manager],",")-1) AS LastName, Mid([Manager],InStr([Manager],",")+1) AS FirstName
+FROM Infoport
+UNION
+SELECT Left([Manager],InStr([Manager],",")-1) AS LastName, Mid([Manager],InStr([Manager],",")+1) AS FirstName
+FROM NPC
+UNION SELECT Left([Manager],InStr([Manager],",")-1) AS LastName, Mid([Manager],InStr([Manager],",")+1) AS FirstName
+FROM Operations;

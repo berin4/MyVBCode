@@ -1,0 +1,53 @@
+1.Identify data in a workbook sheet based on a text criterium and a date criterium or condition using a looping process
+2.Select the specific data which meets the two or multiple conditions
+3.Copy the identified data
+4.Open another workbook
+5.Find the first blank row in a specific worksheet in the workbook
+6.Paste the data in the identified blank or empty row – erow
+7.Save the workbook
+8.Close the workbook
+
+***Copy Data to Another Excel WorkBook Based on Criteria Using VBA***
+
+
+Sub mySales()
+
+Dim LastRow As Integer, i As Integer, erow As Integer
+
+LastRow = ActiveSheet.Range(“A” & Rows.Count).End(xlUp).Row
+
+For i = 2 To LastRow
+
+If Cells(i, 1) = Date And Cells(i, 2) = “Sales” Then
+ Range(Cells(i, 1), Cells(i, 7)).Select
+ Selection.Copy
+
+Workbooks.Open Filename:=”C:\Users\takyar\Documents\salesmaster-new.xlsx”
+Worksheets(“Sheet1”).Select
+ erow = ActiveSheet.Cells(Rows.Count, 1).End(xlUp).Offset(1, 0).Row
+
+ActiveSheet.Cells(erow, 1).Select
+ ActiveSheet.Paste
+ ActiveWorkbook.Save
+ ActiveWorkbook.Close
+ Application.CutCopyMode = False
+ End If
+
+Next i
+ End Sub
+
+-------------------------------------------------------------
+Sub FormatSheets()
+ Sheets(Array("Sheet2", "Sheet3", "Sheet5")).Select
+ Range("A1:H1").Select
+ Selection.Borders(xlBottom).LineStyle = xlDouble
+End Sub
+---------------------------------------------------------------------
+   Sub FillAll()
+ Worksheets("Sheet2").Range("A1:H1") _
+ .Borders(xlBottom).LineStyle = xlDouble
+ Worksheets.FillAcrossSheets (Worksheets("Sheet2") _
+ .Range("A1:H1"))
+End Sub
+   
+   

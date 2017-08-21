@@ -1,0 +1,104 @@
+
+Sub Lapta()
+Dim LastRow As Long, LastCol As Integer, i As Long, iStart As Long, iEnd As Long
+Dim ws As Worksheet, r As Range, iCol As Integer, t As Date, Prefix As String
+Dim sh As Worksheet, Master As String
+On Error Resume Next
+Set r = Application.InputBox("Click in the column to extract by", Type:=8)
+On Error GoTo 0
+If r Is Nothing Then Exit Sub
+iCol = r.Column
+t = Now
+Application.ScreenUpdating = False
+With ActiveSheet
+    Master = .Name
+    LastRow = .Cells(Rows.Count, "A").End(xlUp).Row
+    LastCol = .Cells(1, Columns.Count).End(xlToLeft).Column
+    .Range(.Cells(2, 1), Cells(LastRow, LastCol)).Sort Key1:=Cells(2, iCol), Order1:=xlAscending, _
+        Header:=xlGuess, OrderCustom:=1, MatchCase:=False, Orientation:=xlTopToBottom
+    iStart = 2
+    For i = 2 To LastRow
+        If .Cells(i, iCol).Value <> .Cells(i + 1, iCol).Value Then
+            iEnd = i
+            Sheets.Add after:=Sheets(Sheets.Count)
+            Set ws = ActiveSheet
+            On Error Resume Next
+            ws.Name = .Cells(iStart, iCol).Value
+            On Error GoTo 0
+            ws.Range(Cells(1, 1), Cells(1, LastCol)).Value = .Range(.Cells(1, 1), .Cells(1, LastCol)).Value
+            .Range(.Cells(iStart, 1), .Cells(iEnd, LastCol)).Copy Destination:=ws.Range("A2")
+            iStart = iEnd + 1
+        End If
+    Next i
+End With
+Application.CutCopyMode = False
+Application.ScreenUpdating = True
+MsgBox "Completed in " & Format(Now - t, "hh:mm:ss.00"), vbInformation
+If MsgBox("Do you want to save the separated sheets as workbooks", vbYesNo + vbQuestion) = vbYes Then
+    Prefix = InputBox("Enter a prefix (or leave blank)")
+    Application.ScreenUpdating = False
+    For Each sh In ThisWorkbook.Worksheets
+        If sh.Name <> Master Then
+            sh.Copy
+            ActiveWorkbook.SaveAs Filename:=ThisWorkbook.Path & "\" & Prefix & sh.Name & ".xls"
+            ActiveWorkbook.Close
+        End If
+     Next sh
+     Application.ScreenUpdating = True
+End If
+End Sub
+
+
+
+Set CopyRng = wsDest(j).Range("A2:I2")
+wbDest.Name = wbSrc.Worksheets(wsSrc.Name)
+If DoesSheetExist(wsSrc.Name, wsDest) And wsSrc.Visible = xlSheetVisible Then
+    Set wsDest = wbSrc.Worksheets(wsSrc.Name)
+
+
+If DoesSheetExist(wsSrc.Name, wsDest) Then
+       Set wsDest = wbSrc.Worksheets(wsSrc.Name)
+       End If
+
+If wsSrc.Visible = xlSheetVisible And Not wsSrc Is Nothing Then
+
+    'Add a worksheet with the name "RDBMergeSheet"
+   With ActiveSheet
+
+And Not wsSrc Is Nothing Then
+
+Set wsSrc = wbSrc.Range("CMS, BMS, GIA, IIA, PIMS, PVR, URS, RBE")
+   Set wsDest = wbDest.Range("CMS, BMS, GIA, IIA, PIMS, PVR, URS, RBE")
+wsSrc.Visible = xlSheetVisible
+If Not IsError(Application.Match(sh.Name, _
+                                     Array("CMS", "BMS", "GIA", "IIA", "PIMS", "PVR", "URS", "RBE"), 0)) Then
+  Select Case wsSrc.[A2].Text     'set the target sheet based on [A3] value
+        Case "BMS":    Set wsDest = ThisWorkbook.Sheets("BMS")
+        Case "CMS":    Set wsDest = ThisWorkbook.Sheets("CMS")
+        Case "GIA":    Set wsDest = ThisWorkbook.Sheets("GIA")
+        Case "IIA":    Set wsDest = ThisWorkbook.Sheets("IIA")
+        Case "PIMS":   Set wsDest = ThisWorkbook.Sheets("PIMS")
+        Case "PVR":    Set wsDest = ThisWorkbook.Sheets("PVR")
+        Case "URS":    Set wsDest = ThisWorkbook.Sheets("URS")
+        Case "RBE":    Set wsDest = ThisWorkbook.Sheets("ROLE-BASED-ETITLEMENT")
+        'add more cases here as needed
+    End Select
+
+ If DoesSheetExist(wsSrc.Name, wsDest) Then
+       Set wsDest = wbSrc.Worksheets(wsSrc.Name)
+       End If
+
+
+For i = 2 To Lastcol
+    If Not wsDest Is Nothing Or (.Cells(i, "Manager").Value <> .Cells(i + 1, "Manager").Value) Then  'if [A3] set a destination sheet, copy data
+        wsSrc.Range("A1:I" & LR).Copy wsDest.Range("A" & wsDest.Rows.Count).End(xlUp).Offset(1)
+        Set wsDest = Nothing
+
+Three choice
+=RBE_DESCRIPTIONS!$G$2:$G$5
+
+Two Choice
+=RBE_DESCRIPTIONS!$F$2:$F$4
+
+Access_Level_Decision
+Please make an appropriate selection from the list

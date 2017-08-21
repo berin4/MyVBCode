@@ -1,0 +1,130 @@
+Sub Report_by_MGR()
+
+Dim r As Long, rng As Range, ws As Worksheet, wb As Workbook
+Dim xlCalc As XlCalculation
+Dim newBookNames As Collection
+Dim bookName As Variant
+Dim filePath As String
+Dim newFileName As String
+Dim lastRow As Integer
+Dim myShtArray() As String
+Dim loopArray() As Variant
+Dim j As Integer
+Dim loopSheet As Worksheets
+Dim theName As String
+
+    Application.DisplayAlerts = False
+    Application.ScreenUpdating = False
+
+    ' Save the original setting
+    xlCalc = Application.Calculation
+    ' Put calcs to manual
+    Application.Calculation = xlCalculationManual
+    
+'ReDim myShtArray(1 To Sheets.Count)
+ReDim myShtArray("BMS", "CMS", "IIA", "GIA", "PIMS", "PVR", "URS", "RBE")
+ReDim Preserve loopArray(1 To 1)
+loopArray(1) = "Name_MGR"
+    Set newBookNames = New Collection
+
+    'With ThisWorkbook.Sheets(Array("BMS", "CMS", "IIA", "GIA", "PIMS", "PVR", "URS", "RBE"))
+       
+With ThisWorkbook.Sheets(Array(myShtArray))
+        ThisWorkbook.Sheets(1).Add().name = "BMS_T"
+        ThisWorkbook.Sheets(2).Add().name = "CMS_T"
+        ThisWorkbook.Sheets(3).Add().name = "IIA_T"
+        ThisWorkbook.Sheets(4).Add().name = "GIA_T"
+        ThisWorkbook.Sheets(5).Add().name = "PIMS_T"
+        ThisWorkbook.Sheets(6).Add().name = "PVR_T"
+        ThisWorkbook.Sheets(7).Add().name = "URS_T"
+        ThisWorkbook.Sheets(8).Add().name = "RBE_T"
+        
+        j = 1
+    For Each rng In Sheets(myShtArray(j)).Range("H2", Sheets(myShtArray(j)).Range("H2").End(xlDown))
+        For Each loopSheet In ThisWorkbook.Sheets(myShtArray(j))
+            If loopSheet.name <> "Name_MGR" Then
+                theName = loopSheet.name & "_T"
+                ReDim Preserve loopArray(1 To j)
+                loopArray(j) = theName ' Assign the name of the sheets to j-th position of loopArray()
+            End If
+        Next loopSheet
+        .Range("H2", .Range("H" & Rows.Count).End(xlUp)).AdvancedFilter Action:=xlFilterCopy, CopyToRange:=Sheets(myShtArray(j)).Range("H2"), Unique:=True
+        .AutoFilterMode = False
+        .Range("H2").AutoFilter Field:=8, Criteria1:=rng
+        Set ws = ThisWorkbook.Sheets(j).Add
+        lastRow = .Range("A2:I2").End(xlDown).Row
+        .Range("A2:I" & lastRow).EntireRow.SpecialCells(xlCellTypeVisible).Copy
+        ws.Range("A2").PasteSpecial xlPasteColumnWidths
+        ws.Range("A2").PasteSpecial xlPasteAll
+        .Range("A2:I").EntireRow.Copy ws.Range("A2")
+        j = j + 1
+       
+            ' Maybe empty column A?
+            'ws.Columns("A:A").ClearContents
+            'ws.Columns("A:A").ColumnWidth = 1
+            'ws.name = ActiveWorkbook.Worksheets(j).name
+            
+            ' Create the new workbook using a Workbook object variable
+            ' It means we already have a reference to the new workbook later
+            ' in the code
+        Set wb = Workbooks.Add
+        ws.Move Before:=wb.Worksheets(1)
+        Set ws = wb.Worksheets(1)
+        .AutoFilterMode = False
+            ' Which workbook/sheet are these lines of code for?
+            'Rows.Hidden = False
+            'Columns.Hidden = False
+
+            ' Make sure the new book & sheet are active
+        wb.Activate
+        ws.Activate
+        ActiveWindow.DisplayGridlines = False
+        ws.Range("A2").Select
+        ActiveWindow.FreezePanes = True
+        ws.Range("A2:I2").AutoFilter
+
+    'copy additional worksheets to new workbook
+        ThisWorkbook.Sheets("Name_MGR").Copy After:=wb.Sheets(1)
+        wb.Sheets("Name_MGR").Visible = xlSheetHidden
+        ThisWorkbook.Sheets("ROLESandDESCRIPTIONS").Copy After:=wb.Sheets(1)
+    'end new code'
+        wb.Protect Password:="password", Structure:=True, Windows:=True
+
+        filePath = "C:\Users\ezumangwub\Documents\Data"
+        newFileName = rng & ".xlsm"
+        ActiveWorkbook.SaveAs _
+        Filename:=filePath & newFileName, _
+        FileFormat:=xlOpenXMLWorkbookMacroEnabled
+
+        newBookNames.Add newFileName
+        Next rng
+        ThisWorkbook.Sheets(theName).Delete
+    End With
+
+    ' This might take a while because everything will re-calculate
+    Application.Calculation = xlCalculationAutomatic
+
+    ' Now loop through the new book names
+    ' and save each workbook
+    For Each bookName In newBookNames
+        Workbooks(CStr(bookName)).Save
+        Workbooks(CStr(bookName)).Close False
+    Next bookName
+
+    Application.DisplayAlerts = True
+    Application.ScreenUpdating = True
+
+End Sub
+
+
+
+Set rng = ThisWorkbook.ActiveSheet.Range("H2:H")
+   For ShtArrCounter = LBound(myShtArray) To UBound(myShtArray)
+       With wsSrc(myShtArray(ShtArrCounter))
+            wsSrc(myShtArray(ShtArrCounter)).Activate
+            wsSrc.UsedRange.Select
+            wsSrc.name = rng.name & "_T"
+            'ThisWorkbook.Sheets.Add().name = rng.name & "_T"
+        End With
+   Next ShtArrCounter
+

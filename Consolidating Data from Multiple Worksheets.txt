@@ -1,0 +1,445 @@
+Merge cells from all or some worksheets into one Master sheet
+ 
+The examples will add a worksheet with the name RDBMergeSheet to your workbook and will copy cells
+from every worksheet in the ActiveWorkbook to this worksheet. Each time you run one of the examples it
+ will first delete the summary worksheet named RDBMergeSheet if it exists and then adds a new one to the workbook. This ensures that the data is always up to date after you run the code. In the examples I use a values/formats copy but below the first example there is example code to copy only the values or everything to the RDBMergeSheet.
+
+Important: 
+The macro examples use the LastRow or LastCol function that you can find in the last section of this page. Copy the macro(s) and function(s) in a standard module of your workbook.
+If you have no idea where to paste the code then check out this page.
+Where do I paste the code that I find on the internet
+
+You can also find the information from this page in this article on MSDN: Consolidating Data from Multiple Worksheets into a Summary Worksheet in Excel
+ http://msdn.microsoft.com/en-us/library/cc793964.aspx
+
+ 
+
+Download Example workbook
+
+Download a zip file with a workbook with the code from this page to test the examples.
+Download MergeWorksheetsCode.zip
+
+ 
+
+Copy a range of each sheet
+
+Note: This example use the function LastRow
+This example copy the range A1:G1 from each worksheet.
+
+Change the range in this code line
+
+'Fill in the range that you want to copy
+ Set CopyRng = sh.Range("A1:G1")
+Sub CopyRangeFromMultiWorksheets()
+    Dim sh As Worksheet
+    Dim DestSh As Worksheet
+    Dim Last As Long
+    Dim CopyRng As Range
+
+    With Application
+        .ScreenUpdating = False
+        .EnableEvents = False
+    End With
+
+    'Delete the sheet "RDBMergeSheet" if it exist
+    Application.DisplayAlerts = False
+    On Error Resume Next
+    ActiveWorkbook.Worksheets("RDBMergeSheet").Delete
+    On Error GoTo 0
+    Application.DisplayAlerts = True
+
+    'Add a worksheet with the name "RDBMergeSheet"
+    Set DestSh = ActiveWorkbook.Worksheets.Add
+    DestSh.Name = "RDBMergeSheet"
+
+    'loop through all worksheets and copy the data to the DestSh
+    For Each sh In ActiveWorkbook.Worksheets
+        If sh.Name <> DestSh.Name Then
+
+            'Find the last row with data on the DestSh
+            Last = LastRow(DestSh)
+
+            'Fill in the range that you want to copy
+            Set CopyRng = sh.Range("A1:G1")
+
+            'Test if there enough rows in the DestSh to copy all the data
+            If Last + CopyRng.Rows.Count > DestSh.Rows.Count Then
+                MsgBox "There are not enough rows in the Destsh"
+                GoTo ExitTheSub
+            End If
+
+            'This example copies values/formats, if you only want to copy the
+            'values or want to copy everything look at the example below this macro
+            CopyRng.Copy
+            With DestSh.Cells(Last + 1, "A")
+                .PasteSpecial xlPasteValues
+                .PasteSpecial xlPasteFormats
+                Application.CutCopyMode = False
+            End With
+
+            'Optional: This will copy the sheet name in the H column
+            DestSh.Cells(Last + 1, "H").Resize(CopyRng.Rows.Count).Value = sh.Name
+
+        End If
+    Next
+
+ExitTheSub:
+
+    Application.Goto DestSh.Cells(1)
+
+    'AutoFit the column width in the DestSh sheet
+    DestSh.Columns.AutoFit
+
+    With Application
+        .ScreenUpdating = True
+        .EnableEvents = True
+    End With
+End Sub
+
+ 
+
+Tips to change the examples
+
+In the example above I copy the range A1:G1 but you can also use
+
+Set CopyRng = sh.UsedRange
+To copy all cells with data on the sheet
+
+Set CopyRng = sh.Range("A1").CurrentRegion
+To copy the current region of cell A1
+ The current region is a range bounded by any combination of blank rows and blank column
+
+Set CopyRng = sh.Rows("1")
+ To copy a whole row or rows( use "1:8" then)
+
+
+Copy only values or everything
+
+Replace this :
+    CopyRng.Copy
+    With DestSh.Cells(Last + 1, "A")
+        .PasteSpecial xlPasteValues
+        .PasteSpecial xlPasteFormats
+        Application.CutCopyMode = False
+    End With
+
+With
+    With CopyRng
+        DestSh.Cells(Last + 1, "A").Resize(.Rows.Count, _
+            .Columns.Count).Value = .Value
+   End With
+
+If you only want to copy the values.
+
+Or Replace this :
+    CopyRng.Copy
+    With DestSh.Cells(Last + 1, "A")
+        .PasteSpecial xlPasteValues
+        .PasteSpecial xlPasteFormats
+        Application.CutCopyMode = False
+    End With
+
+With
+CopyRng.Copy DestSh.Cells(Last + 1, "A")
+
+If you want to copy everything
+
+ 
+
+Do not loop through all sheets in the workbook
+
+ Replace this line: 
+If sh.Name <> DestSh.Name Then 
+With: 
+If LCase(Left(sh.Name, 4)) = "week" Then 
+If you want to copy only from sheets with a name that start with week.
+
+
+Replace this line:
+If sh.Name <> DestSh.Name Then
+with:
+If sh.Name <> DestSh.Name And sh.Visible = True Then
+If you want to copy only from the visible sheets in your workbook.
+
+
+Replace this line:
+For Each sh In ActiveWorkbook.Worksheets 
+With:
+For Each sh In ActiveWorkbook.Sheets(Array("Sheet1", "Sheet3"))
+And remove this two lines: 
+If sh.Name <> DestSh.Name Then and End If before Next 
+If you want to copy only from sheets that are in the Array.
+
+
+Replace this line: 
+If sh.Name <> DestSh.Name Then 
+With: 
+If IsError(Application.Match(sh.Name, _
+    Array(DestSh.Name, "Total Sheet", "Menu Sheet"), 0)) Then
+If you want to exclude more sheets then the DestSh.
+
+ 
+
+Copy from row 2 till the last row with data
+
+Note: This example use the function LastRow
+ Note: You can use the tips above also in this example
+
+In example 1 you can see that you can copy all cells on a worksheet with this line:
+Set CopyRng = sh.UsedRange
+
+But what if we do not want to copy the same header row each time.
+The example below will copy from row 2 till the last row with data on each sheet
+
+ Change the start row in the macro if you want to start in a different row.
+
+'Fill in the start row
+StartRow = 2
+
+If you want to copy the header row in the first row of the RDBMergeSheet then copy the code below if each worksheet have the same headers after this line : If sh.Name <> DestSh.Name Then
+'Copy header row, change the range if you use more columns
+If WorksheetFunction.CountA(DestSh.UsedRange) = 0 Then
+  sh.Range("A1:Z1").Copy DestSh.Range("A1")
+End If
+Example macro :Sub CopyDataWithoutHeaders()
+    Dim sh As Worksheet
+    Dim DestSh As Worksheet
+    Dim Last As Long
+    Dim shLast As Long
+    Dim CopyRng As Range
+    Dim StartRow As Long
+
+    With Application
+        .ScreenUpdating = False
+        .EnableEvents = False
+    End With
+
+    'Delete the sheet "RDBMergeSheet" if it exist
+    Application.DisplayAlerts = False
+    On Error Resume Next
+    ActiveWorkbook.Worksheets("RDBMergeSheet").Delete
+    On Error GoTo 0
+    Application.DisplayAlerts = True
+
+    'Add a worksheet with the name "RDBMergeSheet"
+    Set DestSh = ActiveWorkbook.Worksheets.Add
+    DestSh.Name = "RDBMergeSheet"
+
+    'Fill in the start row
+    StartRow = 2
+
+    'loop through all worksheets and copy the data to the DestSh
+    For Each sh In ActiveWorkbook.Worksheets
+        If sh.Name <> DestSh.Name Then
+
+            'Find the last row with data on the DestSh and sh
+            Last = LastRow(DestSh)
+            shLast = LastRow(sh)
+
+            'If sh is not empty and if the last row >= StartRow copy the CopyRng
+            If shLast > 0 And shLast >= StartRow Then
+
+                'Set the range that you want to copy
+                Set CopyRng = sh.Range(sh.Rows(StartRow), sh.Rows(shLast))
+
+                'Test if there enough rows in the DestSh to copy all the data
+                If Last + CopyRng.Rows.Count > DestSh.Rows.Count Then
+                    MsgBox "There are not enough rows in the Destsh"
+                    GoTo ExitTheSub
+                End If
+
+                'This example copies values/formats, if you only want to copy the
+                'values or want to copy everything look below example 1 on this page
+                CopyRng.Copy
+                With DestSh.Cells(Last + 1, "A")
+                    .PasteSpecial xlPasteValues
+                    .PasteSpecial xlPasteFormats
+                    Application.CutCopyMode = False
+                End With
+
+            End If
+
+        End If
+    Next
+
+ExitTheSub:
+
+    Application.Goto DestSh.Cells(1)
+
+    'AutoFit the column width in the DestSh sheet
+    DestSh.Columns.AutoFit
+
+    With Application
+        .ScreenUpdating = True
+        .EnableEvents = True
+    End With
+End Sub
+
+ 
+
+Copy a range/column after the last column with data
+
+Note: This example use the function LastCol
+
+This example copy column A from each sheet after the last column with data on the DestSh. I use A:A to copy the whole column but you can also use a range like A1:A10. Use A:C if you want to copy more columns.
+
+Change it here
+
+'Fill in the column(s) that you want to copy
+ Set CopyRng = sh.Range("A:A")
+
+Remember that Excel 97-2003 have only 256 columns.
+Excel 2007-2013 have 16384 columns.
+Sub AppendDataAfterLastColumn()
+    Dim sh As Worksheet
+    Dim DestSh As Worksheet
+    Dim Last As Long
+    Dim CopyRng As Range
+
+    With Application
+        .ScreenUpdating = False
+        .EnableEvents = False
+    End With
+
+    'Delete the sheet "RDBMergeSheet" if it exist
+    Application.DisplayAlerts = False
+    On Error Resume Next
+    ActiveWorkbook.Worksheets("RDBMergeSheet").Delete
+    On Error GoTo 0
+    Application.DisplayAlerts = True
+
+    'Add a worksheet with the name "RDBMergeSheet"
+    Set DestSh = ActiveWorkbook.Worksheets.Add
+    DestSh.Name = "RDBMergeSheet"
+
+    'loop through all worksheets and copy the data to the DestSh
+    For Each sh In ActiveWorkbook.Worksheets
+        If sh.Name <> DestSh.Name Then
+
+            'Find the last Column with data on the DestSh
+            Last = LastCol(DestSh)
+
+            'Fill in the column(s) that you want to copy
+            Set CopyRng = sh.Range("A:A")
+
+            'Test if there enough rows in the DestSh to copy all the data
+            If Last + CopyRng.Columns.Count > DestSh.Columns.Count Then
+                MsgBox "There are not enough columns in the Destsh"
+                GoTo ExitTheSub
+            End If
+
+            'This example copies values/formats and Column width
+            CopyRng.Copy
+            With DestSh.Cells(1, Last + 1)
+                .PasteSpecial 8    ' Column width
+                .PasteSpecial xlPasteValues
+                .PasteSpecial xlPasteFormats
+                Application.CutCopyMode = False
+            End With
+
+        End If
+    Next
+
+ExitTheSub:
+
+    Application.Goto DestSh.Cells(1)
+
+    With Application
+        .ScreenUpdating = True
+        .EnableEvents = True
+    End With
+End Sub
+
+ 
+
+Common Functions required for all routines
+Function LastRow(sh As Worksheet)
+    On Error Resume Next
+    LastRow = sh.Cells.Find(What:="*", _
+                            After:=sh.Range("A1"), _
+                            Lookat:=xlPart, _
+                            LookIn:=xlFormulas, _
+                            SearchOrder:=xlByRows, _
+                            SearchDirection:=xlPrevious, _
+                            MatchCase:=False).Row
+    On Error GoTo 0
+End Function
+
+Function LastCol(sh As Worksheet)
+    On Error Resume Next
+    LastCol = sh.Cells.Find(What:="*", _
+                            After:=sh.Range("A1"), _
+                            Lookat:=xlPart, _
+                            LookIn:=xlFormulas, _
+                            SearchOrder:=xlByColumns, _
+                            SearchDirection:=xlPrevious, _
+                            MatchCase:=False).Column
+    On Error GoTo 0
+End Function
+
+
+
+Set newwb = Workbooks.Add("C:\Users\ezumangwub\Documents\Data\UER_Report_Template1")
+    newws = newwb.ActiveSheet
+    For Each newws In newwb
+    'Worksheets.Copy
+        newwb.Activate
+        newws.Activate
+        StartRow = 2
+            'Find the last row with data on the DestSh and sh
+            For j = 1 To myShtArray
+             If Oldwb.Sheets(Lastcol) = newws(j).name Then
+               theName = newws(j)
+               End If
+            'If sh is not empty and if the last row >= StartRow copy the CopyRng
+            If Oldwb.Sheets(Lastrow) > 0 And Oldwb.Sheets(Lastrow) >= StartRow Then
+                'Set the range that you want to copy
+                CopyRng = Oldwb.Sheets(newws.Sheets(StartRow), Oldwb.Sheets(Lastrow))
+            'Set CopyRng = sh.Range(newws.Rows(StartRow), newwssh.Rows(shLast))
+            CopyRng.Copy
+        ActiveSheet.PasteSpecial Format:="Unicode Text", Link:=False, _
+        DisplayAsIcon:=False, NoHTMLFormatting:=True
+        Selection.AutoFill Destination:=Range("A2:I2"), Type:=xlFillDefault
+        newws = theName
+            End If
+        Next
+       If olwb.Sheets.name = "Name_MGR" Then
+            xWS.Move Before:=newwb.Worksheets(1)
+        End If
+         Application.ActiveWorkbook.SaveAs Filename:=xPath & "\" & rng.name & ".xls"
+    On Error Resume Next
+            Kill xPath & ".xlsx"
+    Application.ActiveWorkbook.Close False
+    
+    On Error GoTo 0
+    Next
+ For Each bookName In newBookNames
+        Workbooks(CStr(bookName)).Save
+        Workbooks(CStr(bookName)).Close False
+    Next bookName
+
+
+
+'Set wb2 = ActiveWorkbook
+    'sPath2 = sPath1 & Application.PathSeparator & ws.Range("H2").Text
+             
+    On Error Resume Next
+    Kill sPath2 & ".xlsx"
+    On Error GoTo 0
+             
+    On Error GoTo CanNotSaveIt
+    Call wb2.SaveAs(sPath2, xlOpenXMLWorkbook)
+    Call wb2.Close(False)
+             
+        End If
+    Next ws
+     
+    wb1.Activate
+    Application.ScreenUpdating = False
+     
+    Exit Sub
+     
+CanNotSaveIt:
+    Call MsgBox("Can not save" & vbCrLf & vbCrLf & sPath2, vbCritical + vbOKOnly, "Split Workbook")
+    Resume Next
+End Sub

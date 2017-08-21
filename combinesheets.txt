@@ -1,0 +1,40 @@
+Sub Combine()
+    Dim J As Integer, wsNew As Worksheet
+    Dim rngCopy As Range, rngPaste As Range
+    Dim Location As String
+
+    On Error Resume Next
+    Set wsNew = Sheets("Combined")
+    On Error GoTo 0
+        'if sheet does not already exist, create it
+        If wsNew Is Nothing Then
+        Set wsNew = Worksheets.Add(before:=Sheets(1)) ' add a sheet in first place
+        wsNew.Name = "Combined"
+    End If
+
+    'copy headings and paste to new sheet starting in B1
+    With Sheets(2)
+        Range(.Range("A1"), .Cells(1, Columns.Count).End(xlToLeft)).Copy wsNew.Range("B1") 
+    End With
+
+    ' work through sheets
+    For J = 2 To Sheets.Count ' from sheet 2 to last sheet
+        'save sheet name/location to string
+        Location = Sheets(J).Name
+
+        'set range to be copied
+        With Sheets(J).Range("A1").CurrentRegion
+            Set rngCopy = .Offset(1, 0).Resize(.Rows.Count - 1)
+        End With
+
+        'set range to paste to, beginning with column B
+        Set rngPaste = wsNew.Cells(Rows.Count, 2).End(xlUp).Offset(2, 0)
+
+        'copy range and paste to column *B* of combined sheet
+        rngCopy.Copy rngPaste
+
+        'enter the location name in column A for all copied entries
+        Range(rngPaste, rngPaste.End(xlDown)).Offset(0, -1) = Location
+
+    Next J
+End Sub

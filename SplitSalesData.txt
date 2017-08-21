@@ -1,0 +1,44 @@
+Option Explicit
+
+'Split sales data into separate columns baed on the names defined in
+'a Sales Rep List on the 'Names' sheet.
+Sub SplitSalesData()
+    Dim wb As Workbook
+    Dim p As Range
+
+    Application.ScreenUpdating = False
+
+    For Each p In Sheets("Names").Range("RepList")
+        Workbooks.Add
+        Set wb = ActiveWorkbook
+        ThisWorkbook.Activate
+
+        WritePersonToWorkbook wb, p.Value
+
+        wb.SaveAs ThisWorkbook.Path & "\salesdata_" & p.Value
+        wb.Close
+    Next p
+    Application.ScreenUpdating = True
+    Set wb = Nothing
+End Sub
+
+'Writes all the sales data rows belonging to a Person
+'to the first sheet in the named SalesWB.
+Sub WritePersonToWorkbook(ByVal SalesWB As Workbook, _
+                          ByVal Person As String)
+    Dim rw As Range
+    Dim personRows As Range     'Stores all of the rows found
+                                'containing Person in column 1
+    For Each rw In UsedRange.Rows
+        If Person = rw.Cells(1, 1) Then
+            If personRows Is Nothing Then
+                Set personRows = rw
+            Else
+                Set personRows = Union(personRows, rw)
+            End If
+        End If
+    Next rw
+
+    personRows.Copy SalesWB.Sheets(1).Cells(1, 1)
+    Ser personRows = Nothing
+End Sub

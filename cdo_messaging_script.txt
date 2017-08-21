@@ -1,0 +1,46 @@
+Dim CDO_Mail As Object
+Dim CDO_Config As Object
+Dim SMTP_Config As Variant
+Dim strSubject as String
+Dim strFrom as String
+Dim strTo as String
+Dim strCc as String
+Dim strBcc as String
+Dim strBody As String
+
+strSubject = "Results from Excel Spreadsheet"
+strFrom = "ryxxxxxx@xxxxxcast.net"
+strTo = "rdxxxxxx@gmail.com"
+strCc = ""
+strBcc = ""
+strBody = "The total results for this quarter are: " & Str(Sheet1
+
+Set CDO_Mail = CreateObject("CDO.Message")
+On Error GoTo Error_Handling
+
+Set CDO_Config = CreateObject("CDO.Configuration")
+CDO_Config.Load -1
+
+Set SMTP_Config = CDO_Config.Fields
+
+With SMTP_Config
+    .Item("http://schemas.microsoft.com/cdo/configuration/sendusing") = 2
+    .Item("http://schemas.microsoft.com/cdo/configuration/smtpserver") = "smtp.metrocast.net"
+    .Item("http://schemas.microsoft.com/cdo/configuration/smtpserverport") = 25
+    .Update
+End With
+
+With CDO_Mail
+    Set .Configuration = CDO_Config
+End With
+
+CDO_Mail.Subject = strSubject
+CDO_Mail.From = strFrom
+CDO_Mail.To = strTo
+CDO_Mail.TextBody = strBody
+CDO_Mail.CC = strCc
+CDO_Mail.BCC = strBcc
+CDO_Mail.Send
+
+Error_Handling:
+If Err.Description <> - Then MsgBox Err.Description

@@ -1,0 +1,96 @@
+SELECT * INTO MGR_RPT
+FROM ((SELECT 
+Admin.[Application], Admin.[Name], Admin.[Employee_ID], Admin.[Title], Admin.[Location], Admin.[Department], Admin.[Manager], Admin.[Application_ID], Admin.[Application_Access], Admin.[Additional_Access], Admin.[Entitlement_Description]
+FROM Admin)
+UNION
+(SELECT AffiliatedFM.[Application], AffiliatedFM.[Name], AffiliatedFM.[Employee_ID], AffiliatedFM.[Title], AffiliatedFM.[Location], AffiliatedFM.[Department], AffiliatedFM.[Manager], AffiliatedFM.[Application_ID], AffiliatedFM.[Application_Access], AffiliatedFM.[Additional_Access], AffiliatedFM.[Entitlement_Description]
+FROM AffiliatedFM)
+UNION
+(SELECT Auth_Underwriter.[Application], Auth_Underwriter.[Name], Auth_Underwriter.[Employee_ID], Auth_Underwriter.[Title], Auth_Underwriter.[Location], Auth_Underwriter.[Department], Auth_Underwriter.[Manager], Auth_Underwriter.[Application_ID], Auth_Underwriter.[Application_Access], Auth_Underwriter.[Additional_Access], Auth_Underwriter.[Entitlement_Description]
+FROM Auth_Underwriter)
+UNION
+(SELECT BMS.[Application], BMS.[Name], BMS.[Employee_ID], BMS.[Title], BMS.[Location], BMS.[Department], BMS.[Manager], BMS.[Application_ID], BMS.[Application_Access], BMS.[Additional_Access], BMS.[Entitlement_Description]
+FROM BMS)
+UNION
+(SELECT Claims.[Application], Claims.[Name], Claims.[Employee_ID], Claims.[Title], Claims.[Location], Claims.[Department], Claims.[Manager], Claims.[Application_ID], Claims.[Application_Access], Claims.[Additional_Access], Claims.[Entitlement_Description]
+FROM Claims)
+UNION 
+(SELECT Corporate.[Application], Corporate.[Name], Corporate.[Employee_ID], Corporate.[Title], Corporate.[Location], Corporate.[Department], Corporate.[Manager], Corporate.[Application_ID], Corporate.[Application_Access], Corporate.[Additional_Access], Corporate.[Entitlement_Description]
+FROM Corporate)
+UNION
+(SELECT Engineering.[Application], Engineering.[Name], Engineering.[Employee_ID], Engineering.[Title], Engineering.[Location], Engineering.[Department], Engineering.[Manager], Engineering.[Application_ID], Engineering.[Application_Access], Engineering.[Additional_Access], Engineering.[Entitlement_Description]
+FROM Engineering)
+UNION
+(SELECT GIA.[Application], GIA.[Name], GIA.[Employee_ID], GIA.[Title], GIA.[Location], GIA.[Department], GIA.[Manager], GIA.[Application_ID], GIA.[Application_Access], GIA.[Additional_Access], GIA.[Entitlement_Description]
+FROM GIA)
+UNION
+(SELECT IIA.[Application], IIA.[Name], IIA.[Employee_ID], IIA.[Title], IIA.[Location], IIA.[Department], IIA.[Manager], IIA.[Application_ID], IIA.[Application_Access], IIA.[Additional_Access], IIA.[Entitlement_Description]
+FROM IIA)
+UNION
+(SELECT Infoport.[Application], Infoport.[Name], Infoport.[Employee_ID], Infoport.[Title], Infoport.[Location], Infoport.[Department], Infoport.[Manager], Infoport.[Application_ID], Infoport.[Application_Access], Infoport.[Additional_Access], Infoport.[Entitlement_Description]
+FROM Infoport)
+UNION
+(SELECT NPC.[Application], NPC.[Name], NPC.[Employee_ID], NPC.[Title], NPC.[Location], NPC.[Department], NPC.[Manager], NPC.[Application_ID], NPC.[Application_Access], NPC.[Additional_Access], NPC.[Entitlement_Description]
+FROM NPC)
+UNION
+(SELECT Operations.[Application], Operations.[Name], Operations.[Employee_ID], Operations.[Title], Operations.[Location], Operations.[Department], Operations.[Manager], Operations.[Application_ID], Operations.[Application_Access], Operations.[Additional_Access], Operations.[Entitlement_Description]
+FROM Operations)
+UNION
+(SELECT R_PIMS.[Application], R_PIMS.[Name], R_PIMS.[Employee_ID], R_PIMS.[Title], R_PIMS.[Location], R_PIMS.[Department], R_PIMS.[Manager], R_PIMS.[Application_ID], R_PIMS.[Application_Access], R_PIMS.[Additional_Access], R_PIMS.[Entitlement_Description]
+FROM R_PIMS)
+UNION
+(SELECT CMS.[Application], CMS.[Name], CMS.[Employee_ID], CMS.[Title], CMS.[Location], CMS.[Department], CMS.[Manager], CMS.[Application_ID], CMS.[Application_Access], CMS.[Additional_Access], CMS.[Entitlement_Description]
+FROM CMS)
+UNION
+(SELECT PVR.[Application], PVR.[Name], PVR.[Employee_ID], PVR.[Title], PVR.[Location], PVR.[Department], PVR.[Manager], PVR.[Application_ID], PVR.[Application_Access], PVR.[Additional_Access], PVR.[Entitlement_Description]
+FROM PVR))
+GROUP BY MGR_RPT.[Manager];
+
+
+==============================================================================================================================================
+
+
+SELECT * INTO MGR_RPT
+FROM (SELECT 
+Admin.[Application], Admin.[Name], Admin.[Employee_ID], Admin.[Title], Admin.[Location], Admin.[Department], Admin.[Manager], Admin.[Application_ID], Admin.[Application_Access], Admin.[Additional_Access], Admin.[Entitlement_Description]
+FROM Admin
+UNION
+AffiliatedFM.[Application], AffiliatedFM.[Name], AffiliatedFM.[Employee_ID], AffiliatedFM.[Title], AffiliatedFM.[Location], AffiliatedFM.[Department], AffiliatedFM.[Manager], AffiliatedFM.[Application_ID], AffiliatedFM.[Application_Access], AffiliatedFM.[Additional_Access], AffiliatedFM.[Entitlement_Description]
+FROM AffiliatedFM
+UNION
+Auth_Underwriter.[Application], Auth_Underwriter.[Name], Auth_Underwriter.[Employee_ID], Auth_Underwriter.[Title], Auth_Underwriter.[Location], Auth_Underwriter.[Department], Auth_Underwriter.[Manager], Auth_Underwriter.[Application_ID], Auth_Underwriter.[Application_Access], Auth_Underwriter.[Additional_Access], Auth_Underwriter.[Entitlement_Description]
+FROM Auth_Underwriter
+UNION
+BMS.[Application], BMS.[Name], BMS.[Employee_ID], BMS.[Title], BMS.[Location], BMS.[Department], BMS.[Manager], BMS.[Application_ID], BMS.[Application_Access], BMS.[Additional_Access], BMS.[Entitlement_Description]
+FROM BMS
+UNION
+Claims.[Application], Claims.[Name], Claims.[Employee_ID], Claims.[Title], Claims.[Location], Claims.[Department], Claims.[Manager], Claims.[Application_ID], Claims.[Application_Access], Claims.[Additional_Access], Claims.[Entitlement_Description]
+FROM Claims
+UNION
+Corporate.[Application], Corporate.[Name], Corporate.[Employee_ID], Corporate.[Title], Corporate.[Location], Corporate.[Department], Corporate.[Manager], Corporate.[Application_ID], Corporate.[Application_Access], Corporate.[Additional_Access], Corporate.[Entitlement_Description]
+FROM Corporate
+UNION
+Engineering.[Application], Engineering.[Name], Engineering.[Employee_ID], Engineering.[Title], Engineering.[Location], Engineering.[Department], Engineering.[Manager], Engineering.[Application_ID], Engineering.[Application_Access], Engineering.[Additional_Access], Engineering.[Entitlement_Description]
+FROM Engineering
+UNION
+GIA.[Application], GIA.[Name], GIA.[Employee_ID], GIA.[Title], GIA.[Location], GIA.[Department], GIA.[Manager], GIA.[Application_ID], GIA.[Application_Access], GIA.[Additional_Access], GIA.[Entitlement_Description] 
+FROM GIA
+UNION
+IIA.[Application], IIA.[Name], IIA.[Employee_ID], IIA.[Title], IIA.[Location], IIA.[Department], IIA.[Manager], IIA.[Application_ID], IIA.[Application_Access], IIA.[Additional_Access], IIA.[Entitlement_Description]
+FROM IIA
+UNION
+Infoport.[Application], Infoport.[Name], Infoport.[Employee_ID], Infoport.[Title], Infoport.[Location], Infoport.[Department], Infoport.[Manager], Infoport.[Application_ID], Infoport.[Application_Access], Infoport.[Additional_Access], Infoport.[Entitlement_Description]
+FROM Infoport
+UNION
+NPC.[Application], NPC.[Name], NPC.[Employee_ID], NPC.[Title], NPC.[Location], NPC.[Department], NPC.[Manager], NPC.[Application_ID], NPC.[Application_Access], NPC.[Additional_Access], NPC.[Entitlement_Description]
+FROM NPC
+Operations.[Application], Operations.[Name], Operations.[Employee_ID], Operations.[Title], Operations.[Location], Operations.[Department], Operations.[Manager], Operations.[Application_ID], Operations.[Application_Access], Operations.[Additional_Access], Operations.[Entitlement_Description]
+FROM Operations
+R_PIMS.[Application], R_PIMS.[Name], R_PIMS.[Employee_ID], R_PIMS.[Title], R_PIMS.[Location], R_PIMS.[Department], R_PIMS.[Manager], R_PIMS.[Application_ID], R_PIMS.[Application_Access], R_PIMS.[Additional_Access], R_PIMS.[Entitlement_Description]
+FROM R_PIMS
+CMS.[Application], CMS.[Name], CMS.[Employee_ID], CMS.[Title], CMS.[Location], CMS.[Department], CMS.[Manager], CMS.[Application_ID], CMS.[Application_Access], CMS.[Additional_Access], CMS.[Entitlement_Description]
+FROM CMS
+PVR.[Application], PVR.[Name], PVR.[Employee_ID], PVR.[Title], PVR.[Location], PVR.[Department], PVR.[Manager], PVR.[Application_ID], PVR.[Application_Access], PVR.[Additional_Access], PVR.[Entitlement_Description]
+FROM PVR)
+UNION ALL
+ORDER BY MGR_RPT.[Manager];
